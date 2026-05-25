@@ -1,39 +1,53 @@
-{% extends 'base.html' %}
-{% block title %}Equipos — Arena-Match{% endblock %}
+{% extends "base.html" %}
+{% block title %}Partidas — Arena Match{% endblock %}
+
 {% block content %}
-
 <div class="page-header">
-    <h1>🛡 Equipos</h1>
-    <a href="{{ url_for('equipo_nuevo') }}" class="btn btn-primary">+ Nuevo Equipo</a>
+  <h1 class="page-title">⚔ Partidas</h1>
+  <a href="{{ url_for('partida_nueva') }}" class="btn btn-primary">+ Nueva Partida</a>
 </div>
 
-<div class="section-card">
-    {% if equipos %}
-    <table class="data-table">
-        <thead>
-            <tr><th>#</th><th>Nombre</th><th>Videojuego</th><th>Capitán</th><th>Creación</th><th>Miembros</th><th>Acciones</th></tr>
-        </thead>
-        <tbody>
-        {% for e in equipos %}
-        <tr>
-            <td>{{ e.ID_Equipo }}</td>
-            <td><strong>{{ e.NombreEquipo }}</strong></td>
-            <td>{{ e.NombreJuego }}</td>
-            <td>{{ e.Capitan }}</td>
-            <td>{{ e.FechaCreacion }}</td>
-            <td><span class="badge {% if e.NumJugadores >= 3 %}badge-success{% else %}badge-danger{% endif %}">
-                {{ e.NumJugadores }} miembros
-            </span></td>
-            <td class="actions">
-                <a href="{{ url_for('equipo_detalle', id=e.ID_Equipo) }}" class="btn btn-sm">Ver</a>
-                <a href="{{ url_for('equipo_editar', id=e.ID_Equipo) }}" class="btn btn-sm btn-warning">Editar</a>
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p class="empty">No hay equipos registrados.</p>
-    {% endif %}
+{% if partidas %}
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Fecha / Hora</th>
+        <th>Torneo</th>
+        <th>Árbitro</th>
+        <th>Resultado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in partidas %}
+      <tr>
+        <td><span class="text-cyan">#{{ p['ID_Partida'] }}</span></td>
+        <td>{{ p['FechaHora'] }}</td>
+        <td>{{ p['NombreTorneo'] }}</td>
+        <td>{{ p['Arbitro'] }}</td>
+        <td>
+          {% if p['Resultado_Final'] %}
+            <span class="badge badge-success">{{ p['Resultado_Final'] }}</span>
+          {% else %}
+            <span class="badge badge-warning">Pendiente</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('registrar_resultado', id=p['ID_Partida']) }}" class="btn btn-secondary btn-sm">
+            Resultado
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-state-icon">⚔</div>
+  <p>No hay partidas registradas. <a href="{{ url_for('partida_nueva') }}" class="text-cyan">Crea la primera</a>.</p>
+</div>
+{% endif %}
 {% endblock %}
