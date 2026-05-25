@@ -1,36 +1,43 @@
-{% extends 'base.html' %}
-{% block title %}Transacciones — Arena-Match{% endblock %}
+{% extends "base.html" %}
+{% block title %}Sanciones Activas — Arena Match{% endblock %}
+
 {% block content %}
 <div class="page-header">
-    <h1>💰 Transacciones Financieras</h1>
-    <a href="{{ url_for('reportes') }}" class="btn">← Reportes</a>
+  <h1 class="page-title">🚫 Sanciones Activas</h1>
+  <a href="{{ url_for('reportes') }}" class="btn btn-secondary">← Reportes</a>
 </div>
-<div class="section-card">
-    <div class="stat-card" style="display:inline-flex;margin-bottom:1.5rem">
-        <span class="stat-icon">💵</span>
-        <div class="stat-info">
-            <span class="stat-number">${{ '%.2f'|format(total) }}</span>
-            <span class="stat-label">Total Movimientos</span>
-        </div>
-    </div>
-    {% if data %}
-    <table class="data-table">
-        <thead><tr><th>Torneo</th><th>Equipo</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Estado</th></tr></thead>
-        <tbody>
-        {% for r in data %}
-        <tr>
-            <td>{{ r.NombreTorneo }}</td>
-            <td>{{ r.NombreEquipo }}</td>
-            <td><span class="badge">{{ r.TipoTransaccion }}</span></td>
-            <td>${{ '%.2f'|format(r.Monto) }}</td>
-            <td>{{ r.FechaTransaccion }}</td>
-            <td><span class="badge badge-{{ r.EstadoTransaccion | lower }}">{{ r.EstadoTransaccion }}</span></td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p class="empty">No hay transacciones registradas.</p>
-    {% endif %}
+
+{% if sanciones %}
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Nickname</th>
+        <th>Jugador</th>
+        <th>Motivo</th>
+        <th>Inicio</th>
+        <th>Fin</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in sanciones %}
+      <tr>
+        <td><span class="text-cyan">{{ s['Nickname'] }}</span></td>
+        <td>{{ s['NombreCompleto'] }}</td>
+        <td>{{ s['Motivo'] }}</td>
+        <td>{{ s['FechaInicio'] }}</td>
+        <td>{{ s['FechaFin'] }}</td>
+        <td><span class="badge badge-danger">Activa</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-state-icon">✅</div>
+  <p>No hay sanciones activas en este momento.</p>
+</div>
+{% endif %}
 {% endblock %}
