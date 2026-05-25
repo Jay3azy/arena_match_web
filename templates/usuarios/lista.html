@@ -19,19 +19,19 @@
         <tbody>
         {% for u in jugadores %}
         <tr>
-            <td>{{ u.ID_Jugador }}</td>
-            <td>{{ u.Nombre }}</td>
-            <td>{{ u.Apellido }}</td>
-            <td><strong>{{ u.Nickname }}</strong></td>
-            <td>{{ u.Correo }}</td>
-            <td><span class="badge badge-rol">{{ u.RolPlataforma }}</span></td>
-            <td class="actions">
-                <a href="{{ url_for('jugador_editar', id=u.ID_Jugador) }}" class="btn btn-sm btn-warning">Editar</a>
-                <form method="POST" action="{{ url_for('jugador_eliminar', id=u.ID_Jugador) }}" style="display:inline"
-                      onsubmit="return confirm('¿Eliminar jugador?')">
-                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-                </form>
-            </td>
+            <td>{{ u.id_jugador }}</td>
+<td>{{ u.nombre }}</td>
+<td>{{ u.apellido }}</td>
+<td><strong>{{ u.nickname }}</strong></td>
+<td>{{ u.correo }}</td>
+<td><span class="badge badge-rol">{{ u.rolplataforma }}</span></td>
+<td class="actions">
+    <a href="{{ url_for('jugador_editar', id=u.id_jugador) }}" class="btn btn-sm btn-warning">Editar</a>
+    <form method="POST" action="{{ url_for('jugador_eliminar', id=u.id_jugador) }}" style="display:inline"
+          onsubmit="return confirm('¿Eliminar jugador?')">
+        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+    </form>
+</td>
         </tr>
         {% endfor %}
         </tbody>
