@@ -3,7 +3,6 @@ Arena-Match - Aplicación Web Flask (Versión Final Supabase / PostgreSQL)
 ITIZ-2201 Base de Datos II - Fase 4
 Grupo 04: Ontaneda Isaiah, Ortiz Jose, Ramos Kimberlly
 """
-
 from flask import Flask, render_template, request, redirect, url_for, flash
 import psycopg2
 import psycopg2.extras
@@ -13,7 +12,6 @@ import os
 app = Flask(__name__)
 app.secret_key = 'arenamatch_secret_2026'
 
-# Configuración de la cadena de conexión nativa de Supabase
 DATABASE_URL = os.environ.get(
     'DATABASE_URL',
     'postgresql://postgres:basegrupo42026@db.synohlxxdftnfipokkmu.supabase.co:5432/postgres'
@@ -24,7 +22,6 @@ def get_connection():
 
 def query_db(sql, params=None, fetch='all'):
     conn = get_connection()
-    # Usamos RealDictCursor para mantener la estructura de diccionarios llave-valor
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute(sql, params or [])
     if fetch == 'one':
@@ -45,46 +42,36 @@ def execute_db(sql, params=None):
     cursor.close()
     conn.close()
 
-
 # =============================================
 # DASHBOARD
 # =============================================
-
 @app.route('/')
 def index():
     try:
-        # PostgreSQL retorna los alias COUNT(*) estrictamente en minúsculas. 
-        # Forzamos las llaves en mayúsculas/minúsculas según tus HTMLs originales.
         stats = {
             'jugadores': query_db("SELECT COUNT(*) AS n FROM Jugadores", fetch='one')['n'],
             'equipos':   query_db("SELECT COUNT(*) AS n FROM Equipos",   fetch='one')['n'],
             'torneos':   query_db("SELECT COUNT(*) AS n FROM Torneos",   fetch='one')['n'],
             'partidas':  query_db("SELECT COUNT(*) AS n FROM Partidas",  fetch='one')['n'],
         }
-        
-        # Agregamos alias con comillas dobles para que el diccionario respete las mayúsculas en el HTML
         torneos_activos = query_db("""
             SELECT t.NombreTorneo AS "NombreTorneo", t.Estado AS "Estado", v.NombreJuego AS "NombreJuego"
             FROM Torneos t
             JOIN Videojuegos v ON t.ID_Videojuego = v.ID_Videojuego
-            ORDER BY t.ID_Torneo DESC
-            LIMIT 5
+            ORDER BY t.ID_Torneo DESC LIMIT 5
         """)
         return render_template('index.html', stats=stats, torneos=torneos_activos)
     except Exception as e:
         return render_template('error.html', error=str(e))
 
-
 # =============================================
 # JUGADORES
 # =============================================
-
 @app.route('/jugadores')
 def jugadores():
-    # Mapeamos explícitamente las columnas para asegurar compatibilidad exacta con tus vistas HTML antiguas
     data = query_db("""
-        SELECT ID_Jugador AS "ID_Jugador", Nombre AS "Nombre", Apellido AS "Apellido", 
-               Nickname AS "Nickname", Correo AS "Correo", RolPlataforma AS "RolPlataforma" 
+        SELECT ID_Jugador AS "ID_Jugador", Nombre AS "Nombre", Apellido AS "Apellido",
+               Nickname AS "Nickname", Correo AS "Correo", RolPlataforma AS "RolPlataforma"
         FROM Jugadores ORDER BY ID_Jugador
     """)
     return render_template('usuarios/lista.html', jugadores=data)
@@ -117,10 +104,9 @@ def jugador_editar(id):
             return redirect(url_for('jugadores'))
         except Exception as e:
             flash(f'Error: {e}', 'danger')
-            
     jugador = query_db("""
-        SELECT ID_Jugador AS "ID_Jugador", Nombre AS "Nombre", Apellido AS "Apellido", 
-               Nickname AS "Nickname", Correo AS "Correo", RolPlataforma AS "RolPlataforma" 
+        SELECT ID_Jugador AS "ID_Jugador", Nombre AS "Nombre", Apellido AS "Apellido",
+               Nickname AS "Nickname", Correo AS "Correo", RolPlataforma AS "RolPlataforma"
         FROM Jugadores WHERE ID_Jugador=%s
     """, [id], fetch='one')
     return render_template('usuarios/form.html', roles=['Capitán', 'Miembro'], jugador=jugador)
@@ -134,21 +120,19 @@ def jugador_eliminar(id):
         flash(f'Error al eliminar: {e}', 'danger')
     return redirect(url_for('jugadores'))
 
-
 # =============================================
 # EQUIPOS
 # =============================================
-
 @app.route('/equipos')
 def equipos():
     data = query_db("""
-        SELECT e.ID_Equipo AS "ID_Equipo", e.NombreEquipo AS "NombreEquipo", 
+        SELECT e.ID_Equipo AS "ID_Equipo", e.NombreEquipo AS "NombreEquipo",
                v.NombreJuego AS "NombreJuego", e.FechaCreacion AS "FechaCreacion",
                j.Nombre || ' ' || j.Apellido AS "Capitan",
                COUNT(me.ID_Jugador) AS "NumJugadores"
         FROM Equipos e
-        JOIN Videojuegos v       ON e.ID_Videojuego = v.ID_Videojuego
-        JOIN Jugadores j         ON e.ID_Capitan    = j.ID_Jugador
+        JOIN Videojuegos v ON e.ID_Videojuego = v.ID_Videojuego
+        JOIN Jugadores j ON e.ID_Capitan = j.ID_Jugador
         LEFT JOIN Miembros_Equipo me ON e.ID_Equipo = me.ID_Equipo AND me.Activo = TRUE
         GROUP BY e.ID_Equipo, e.NombreEquipo, v.NombreJuego, e.FechaCreacion, j.Nombre, j.Apellido
         ORDER BY e.ID_Equipo
@@ -168,9 +152,8 @@ def equipo_nuevo():
             return redirect(url_for('equipos'))
         except Exception as e:
             flash(f'Error: {e}', 'danger')
-            
     videojuegos = query_db('SELECT ID_Videojuego AS "ID_Videojuego", NombreJuego AS "NombreJuego" FROM Videojuegos ORDER BY NombreJuego')
-    capitanes   = query_db('SELECT ID_Jugador AS "ID_Jugador", Nombre || \' \' || Apellido AS "NombreCompleto" FROM Jugadores WHERE RolPlataforma = \'Capitán\' ORDER BY Nombre')
+    capitanes = query_db("SELECT ID_Jugador AS \"ID_Jugador\", Nombre || ' ' || Apellido AS \"NombreCompleto\" FROM Jugadores WHERE RolPlataforma = 'Capitán' ORDER BY Nombre")
     return render_template('equipos/form.html', equipo=None, videojuegos=videojuegos, capitanes=capitanes)
 
 @app.route('/equipos/<int:id>')
@@ -180,13 +163,12 @@ def equipo_detalle(id):
                v.NombreJuego AS "NombreJuego", j.Nombre || ' ' || j.Apellido AS "NombreCapitan"
         FROM Equipos e
         JOIN Videojuegos v ON e.ID_Videojuego = v.ID_Videojuego
-        JOIN Jugadores j   ON e.ID_Capitan    = j.ID_Jugador
+        JOIN Jugadores j ON e.ID_Capitan = j.ID_Jugador
         WHERE e.ID_Equipo = %s
     """, [id], fetch='one')
-    
     miembros = query_db("""
-        SELECT j.ID_Jugador AS "ID_Jugador", j.Nombre AS "Nombre", j.Apellido AS "Apellido", 
-               j.Nickname AS "Nickname", j.RolPlataforma AS "RolPlataforma", 
+        SELECT j.ID_Jugador AS "ID_Jugador", j.Nombre AS "Nombre", j.Apellido AS "Apellido",
+               j.Nickname AS "Nickname", j.RolPlataforma AS "RolPlataforma",
                me.FechaIngreso AS "FechaIngreso", me.Activo AS "Activo"
         FROM Miembros_Equipo me
         JOIN Jugadores j ON me.ID_Jugador = j.ID_Jugador
@@ -207,22 +189,19 @@ def equipo_editar(id):
             return redirect(url_for('equipos'))
         except Exception as e:
             flash(f'Error: {e}', 'danger')
-            
-    equipo      = query_db('SELECT ID_Equipo AS "ID_Equipo", NombreEquipo AS "NombreEquipo", ID_Capitan AS "ID_Capitan", ID_Videojuego AS "ID_Videojuego" FROM Equipos WHERE ID_Equipo=%s', [id], fetch='one')
+    equipo = query_db('SELECT ID_Equipo AS "ID_Equipo", NombreEquipo AS "NombreEquipo", ID_Capitan AS "ID_Capitan", ID_Videojuego AS "ID_Videojuego" FROM Equipos WHERE ID_Equipo=%s', [id], fetch='one')
     videojuegos = query_db('SELECT ID_Videojuego AS "ID_Videojuego", NombreJuego AS "NombreJuego" FROM Videojuegos ORDER BY NombreJuego')
-    capitanes   = query_db('SELECT ID_Jugador AS "ID_Jugador", Nombre || \' \' || Apellido AS "NombreCompleto" FROM Jugadores WHERE RolPlataforma = \'Capitán\' ORDER BY Nombre')
+    capitanes = query_db("SELECT ID_Jugador AS \"ID_Jugador\", Nombre || ' ' || Apellido AS \"NombreCompleto\" FROM Jugadores WHERE RolPlataforma = 'Capitán' ORDER BY Nombre")
     return render_template('equipos/form.html', equipo=equipo, videojuegos=videojuegos, capitanes=capitanes)
-
 
 # =============================================
 # TORNEOS
 # =============================================
-
 @app.route('/torneos')
 def torneos():
     data = query_db("""
-        SELECT t.ID_Torneo AS "ID_Torneo", t.NombreTorneo AS "NombreTorneo", 
-               v.NombreJuego AS "NombreJuego", t.FechaInicio AS "FechaInicio", 
+        SELECT t.ID_Torneo AS "ID_Torneo", t.NombreTorneo AS "NombreTorneo",
+               v.NombreJuego AS "NombreJuego", t.FechaInicio AS "FechaInicio",
                t.FechaFin AS "FechaFin", t.Estado AS "Estado"
         FROM Torneos t
         JOIN Videojuegos v ON t.ID_Videojuego = v.ID_Videojuego
@@ -249,14 +228,13 @@ def torneo_nuevo():
 @app.route('/torneos/<int:id>')
 def torneo_detalle(id):
     torneo = query_db("""
-        SELECT t.ID_Torneo AS "ID_Torneo", t.NombreTorneo AS "NombreTorneo", 
-               t.FechaInicio AS "FechaInicio", t.FechaFin AS "FechaFin", 
-               t.Estado AS "Estado", v.NombreJuego AS "NombreJuego" 
+        SELECT t.ID_Torneo AS "ID_Torneo", t.NombreTorneo AS "NombreTorneo",
+               t.FechaInicio AS "FechaInicio", t.FechaFin AS "FechaFin",
+               t.Estado AS "Estado", v.NombreJuego AS "NombreJuego"
         FROM Torneos t
         JOIN Videojuegos v ON t.ID_Videojuego = v.ID_Videojuego
         WHERE t.ID_Torneo = %s
     """, [id], fetch='one')
-    
     partidas = query_db("""
         SELECT p.ID_Partida AS "ID_Partida", p.FechaHora AS "FechaHora", p.Resultado_Final AS "Resultado_Final",
                a.Nombre || ' ' || a.Apellido AS "Arbitro"
@@ -269,8 +247,6 @@ def torneo_detalle(id):
 @app.route('/torneos/estado/<int:id>', methods=['POST'])
 def torneo_cambiar_estado(id):
     estados = ['Planificación', 'Inscripciones Abiertas', 'En Curso', 'Finalizado']
-
-    # Buscamos usando el alias correcto en mayúsculas
     torneo = query_db('SELECT Estado AS "Estado" FROM Torneos WHERE ID_Torneo=%s', [id], fetch='one')
     if torneo:
         try:
@@ -284,46 +260,71 @@ def torneo_cambiar_estado(id):
             flash('Estado desconocido.', 'danger')
     return redirect(url_for('torneo_detalle', id=id))
 
-
 # =============================================
-# PARTIDAS
+# PARTIDAS  ← RUTA NUEVA PARA CREAR PARTIDAS
 # =============================================
-
 @app.route('/partidas')
 def partidas():
     data = query_db("""
         SELECT p.ID_Partida AS "ID_Partida", p.FechaHora AS "FechaHora", p.Resultado_Final AS "Resultado_Final",
                t.NombreTorneo AS "NombreTorneo", a.Nombre || ' ' || a.Apellido AS "Arbitro"
         FROM Partidas p
-        JOIN Torneos t  ON p.ID_Torneo  = t.ID_Torneo
+        JOIN Torneos t ON p.ID_Torneo = t.ID_Torneo
         JOIN Arbitros a ON p.ID_Arbitro = a.ID_Arbitro
         ORDER BY p.FechaHora DESC
     """)
     return render_template('enfrentamientos/lista.html', partidas=data)
 
+@app.route('/partidas/nuevo', methods=['GET', 'POST'])
+def partida_nueva():
+    if request.method == 'POST':
+        try:
+            execute_db("""
+                INSERT INTO Partidas (FechaHora, ID_Torneo, ID_Arbitro, Resultado_Final)
+                VALUES (%s, %s, %s, NULL)
+            """, [request.form['fecha_hora'],
+                  int(request.form['torneo_id']),
+                  int(request.form['arbitro_id'])])
+            flash('Partida creada exitosamente.', 'success')
+            return redirect(url_for('partidas'))
+        except Exception as e:
+            flash(f'Error al crear partida: {e}', 'danger')
+    torneos_lista = query_db("""
+        SELECT ID_Torneo AS "ID_Torneo", NombreTorneo AS "NombreTorneo"
+        FROM Torneos WHERE Estado IN ('Inscripciones Abiertas', 'En Curso')
+        ORDER BY NombreTorneo
+    """)
+    arbitros_lista = query_db("""
+        SELECT ID_Arbitro AS "ID_Arbitro", Nombre || ' ' || Apellido AS "NombreCompleto"
+        FROM Arbitros ORDER BY Nombre
+    """)
+    return render_template('enfrentamientos/form.html',
+                           torneos=torneos_lista,
+                           arbitros=arbitros_lista)
+
 @app.route('/partidas/resultado/<int:id>', methods=['GET', 'POST'])
 def registrar_resultado(id):
     if request.method == 'POST':
-        execute_db("UPDATE Partidas SET Resultado_Final=%s WHERE ID_Partida=%s",
-                   [request.form['resultado'], id])
-        flash('Resultado registrado.', 'success')
+        try:
+            execute_db("UPDATE Partidas SET Resultado_Final=%s WHERE ID_Partida=%s",
+                       [request.form['resultado'], id])
+            flash('Resultado registrado.', 'success')
+        except Exception as e:
+            flash(f'Error al registrar resultado: {e}', 'danger')
         return redirect(url_for('partidas'))
-        
     partida = query_db("""
-        SELECT p.ID_Partida AS "ID_Partida", p.FechaHora AS "FechaHora", p.Resultado_Final AS "Resultado_Final", 
+        SELECT p.ID_Partida AS "ID_Partida", p.FechaHora AS "FechaHora", p.Resultado_Final AS "Resultado_Final",
                t.NombreTorneo AS "NombreTorneo", a.Nombre || ' ' || a.Apellido AS "Arbitro"
         FROM Partidas p
-        JOIN Torneos t  ON p.ID_Torneo  = t.ID_Torneo
+        JOIN Torneos t ON p.ID_Torneo = t.ID_Torneo
         JOIN Arbitros a ON p.ID_Arbitro = a.ID_Arbitro
         WHERE p.ID_Partida = %s
     """, [id], fetch='one')
     return render_template('enfrentamientos/resultado.html', enf=partida)
 
-
 # =============================================
 # REPORTES
 # =============================================
-
 @app.route('/reportes')
 def reportes():
     return render_template('reportes/index.html')
@@ -331,7 +332,7 @@ def reportes():
 @app.route('/reportes/equipos_torneo')
 def reporte_equipos_torneo():
     data = query_db("""
-        SELECT t.NombreTorneo AS "NombreTorneo", v.NombreJuego AS "NombreJuego", 
+        SELECT t.NombreTorneo AS "NombreTorneo", v.NombreJuego AS "NombreJuego",
                COUNT(DISTINCT p.ID_Partida) AS "TotalPartidas"
         FROM Torneos t
         JOIN Videojuegos v ON t.ID_Videojuego = v.ID_Videojuego
@@ -348,7 +349,7 @@ def reporte_partidas():
                COALESCE(p.Resultado_Final, 'Pendiente') AS "Resultado",
                a.Nombre || ' ' || a.Apellido AS "Arbitro"
         FROM Partidas p
-        JOIN Torneos t  ON p.ID_Torneo  = t.ID_Torneo
+        JOIN Torneos t ON p.ID_Torneo = t.ID_Torneo
         JOIN Arbitros a ON p.ID_Arbitro = a.ID_Arbitro
         ORDER BY p.FechaHora DESC
     """)
@@ -356,20 +357,21 @@ def reporte_partidas():
 
 @app.route('/reportes/sanciones_activas')
 def reporte_sanciones_activas():
-    data = query_db("""
-        SELECT j.Nickname AS "Nickname", j.Nombre || ' ' || j.Apellido AS "NombreCompleto",
-               s.Motivo AS "Motivo", s.FechaInicio AS "FechaInicio", s.FechaFin AS "FechaFin"
-        FROM Sanciones s
-        JOIN Jugadores j ON s.ID_Jugador = j.ID_Jugador
-        WHERE s.Activa = TRUE ORDER BY s.FechaFin
-    """)
+    # FIX: Envuelto en try/except para evitar error 500 si la tabla no existe o el campo difiere
+    try:
+        data = query_db("""
+            SELECT j.Nickname AS "Nickname", j.Nombre || ' ' || j.Apellido AS "NombreCompleto",
+                   s.Motivo AS "Motivo", s.FechaInicio AS "FechaInicio", s.FechaFin AS "FechaFin"
+            FROM Sanciones s
+            JOIN Jugadores j ON s.ID_Jugador = j.ID_Jugador
+            WHERE s.Activa = TRUE ORDER BY s.FechaFin
+        """)
+    except Exception as e:
+        # En lugar de 500, mostramos mensaje controlado
+        flash(f'No se pudieron cargar las sanciones: {e}', 'danger')
+        data = []
     return render_template('reportes/transacciones.html', sanciones=data)
 
-
 if __name__ == '__main__':
-    # Agregamos lectura dinámica de puertos requerida para entornos como Vercel/Render
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
-
-
-    #final del código o eso espero 
