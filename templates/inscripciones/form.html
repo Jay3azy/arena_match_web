@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Inscribir Equipo — Arena-Match{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>📋 Inscribir Equipo</h1>
+    <a href="{{ url_for('torneo_detalle', id=torneo.IDTorneo) }}" class="btn">← Volver</a>
+</div>
+
+<div class="section-card form-card">
+    <div class="info-box">
+        <strong>Torneo:</strong> {{ torneo.NombreTorneo }}<br>
+        <strong>Videojuego:</strong> {{ torneo.Videojuego }}<br>
+        <strong>Costo de inscripción:</strong> ${{ '%.2f'|format(torneo.CostoInscripcion) }}
+    </div>
+
+    {% if equipos %}
+    <form method="POST">
+        <div class="form-group">
+            <label>Selecciona el Equipo *</label>
+            <select name="equipo_id" required>
+                <option value="">— Seleccionar equipo —</option>
+                {% for e in equipos %}
+                <option value="{{ e.IDEquipo }}">{{ e.NombreEquipo }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <p class="hint">⚠ El equipo debe tener mínimo 3 jugadores para inscribirse.</p>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Inscribir Equipo</button>
+        </div>
+    </form>
+    {% else %}
+    <p class="empty">No hay equipos disponibles para inscribirse en este torneo (deben jugar {{ torneo.Videojuego }}).</p>
+    {% endif %}
+</div>
+{% endblock %}

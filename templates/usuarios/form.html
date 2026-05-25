@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Editar' if jugador else 'Nuevo' }} Jugador — Arena-Match{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>👤 {{ 'Editar' if jugador else 'Nuevo' }} Jugador</h1>
+    <a href="{{ url_for('jugadores') }}" class="btn">← Volver</a>
+</div>
+
+<div class="section-card form-card">
+    <form method="POST">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Nombre *</label>
+                <input type="text" name="nombre" required
+                       value="{{ jugador.Nombre if jugador else '' }}" placeholder="Nombre">
+            </div>
+            <div class="form-group">
+                <label>Apellido *</label>
+                <input type="text" name="apellido" required
+                       value="{{ jugador.Apellido if jugador else '' }}" placeholder="Apellido">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Nickname *</label>
+            <input type="text" name="nickname" required
+                   value="{{ jugador.Nickname if jugador else '' }}" placeholder="Ej: xXSniperXx">
+        </div>
+        <div class="form-group">
+            <label>Correo *</label>
+            <input type="email" name="correo" required
+                   value="{{ jugador.Correo if jugador else '' }}" placeholder="correo@ejemplo.com">
+        </div>
+        <div class="form-group">
+            <label>Rol en Plataforma *</label>
+            <select name="rol" required>
+                {% for r in roles %}
+                <option value="{{ r }}" {{ 'selected' if jugador and jugador.RolPlataforma == r else '' }}>{{ r }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {{ 'Guardar Cambios' if jugador else 'Registrar Jugador' }}
+            </button>
+            <a href="{{ url_for('jugadores') }}" class="btn">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

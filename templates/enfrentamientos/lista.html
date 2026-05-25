@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Partidas — Arena-Match{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🎮 Partidas</h1>
+</div>
+
+<div class="section-card">
+    {% if partidas %}
+    <table class="data-table">
+        <thead>
+            <tr><th>#</th><th>Torneo</th><th>Fecha/Hora</th><th>Árbitro</th><th>Resultado</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+        {% for p in partidas %}
+        <tr>
+            <td>{{ p.ID_Partida }}</td>
+            <td>{{ p.NombreTorneo }}</td>
+            <td>{{ p.FechaHora }}</td>
+            <td>{{ p.Arbitro }}</td>
+            <td>{{ p.Resultado_Final or '—' }}</td>
+            <td>
+                {% if not p.Resultado_Final %}
+                <a href="{{ url_for('registrar_resultado', id=p.ID_Partida) }}" class="btn btn-sm btn-warning">Registrar</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No hay partidas registradas.</p>
+    {% endif %}
+</div>
+{% endblock %}

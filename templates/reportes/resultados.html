@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Resultados — Arena-Match{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>🏅 Resultados de Enfrentamientos</h1>
+    <a href="{{ url_for('reportes') }}" class="btn">← Reportes</a>
+</div>
+<div class="section-card">
+    {% if data %}
+    <table class="data-table">
+        <thead><tr><th>Torneo</th><th>Fase</th><th>Equipo 1</th><th>Equipo 2</th><th>Ganador</th><th>Fecha</th></tr></thead>
+        <tbody>
+        {% for r in data %}
+        <tr>
+            <td>{{ r.NombreTorneo }}</td>
+            <td>{{ r.NombreFase }}</td>
+            <td>{{ r.Equipo1 }}</td>
+            <td>{{ r.Equipo2 }}</td>
+            <td>
+                {% if r.Ganador == 'Pendiente' %}
+                <span class="badge badge-pendiente">Pendiente</span>
+                {% else %}
+                <span class="badge badge-success">🏆 {{ r.Ganador }}</span>
+                {% endif %}
+            </td>
+            <td>{{ r.Fecha }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No hay resultados disponibles.</p>
+    {% endif %}
+</div>
+{% endblock %}

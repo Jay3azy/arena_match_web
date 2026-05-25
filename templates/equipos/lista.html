@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Equipos — Arena-Match{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🛡 Equipos</h1>
+    <a href="{{ url_for('equipo_nuevo') }}" class="btn btn-primary">+ Nuevo Equipo</a>
+</div>
+
+<div class="section-card">
+    {% if equipos %}
+    <table class="data-table">
+        <thead>
+            <tr><th>#</th><th>Nombre</th><th>Videojuego</th><th>Capitán</th><th>Creación</th><th>Miembros</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+        {% for e in equipos %}
+        <tr>
+            <td>{{ e.ID_Equipo }}</td>
+            <td><strong>{{ e.NombreEquipo }}</strong></td>
+            <td>{{ e.NombreJuego }}</td>
+            <td>{{ e.Capitan }}</td>
+            <td>{{ e.FechaCreacion }}</td>
+            <td><span class="badge {% if e.NumJugadores >= 3 %}badge-success{% else %}badge-danger{% endif %}">
+                {{ e.NumJugadores }} miembros
+            </span></td>
+            <td class="actions">
+                <a href="{{ url_for('equipo_detalle', id=e.ID_Equipo) }}" class="btn btn-sm">Ver</a>
+                <a href="{{ url_for('equipo_editar', id=e.ID_Equipo) }}" class="btn btn-sm btn-warning">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No hay equipos registrados.</p>
+    {% endif %}
+</div>
+{% endblock %}
