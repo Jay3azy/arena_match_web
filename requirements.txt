@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 blinker==1.9.0
 click==8.4.1
 colorama==0.4.6
@@ -7,3 +8,7 @@ Jinja2==3.1.6
 MarkupSafe==3.0.3
 psycopg2-binary==2.9.12
 Werkzeug==3.1.8
+=======
+flask==3.0.3
+psycopg2-binary==2.9.9
+>>>>>>> 1a7b5790201de0e2eec3f73eca17ca4f90d98727
