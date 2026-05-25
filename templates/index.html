@@ -1,82 +1,95 @@
-{% extends 'base.html' %}
-{% block title %}Dashboard — Arena-Match{% endblock %}
+{% extends "base.html" %}
+{% block title %}Dashboard — Arena Match{% endblock %}
+
 {% block content %}
 
-<div class="page-header">
-    <h1>⚔ Arena-Match Dashboard</h1>
-    <p class="subtitle">Sistema de Gestión de Torneos E-Sports</p>
+<!-- HERO con imagen -->
+<div class="dashboard-hero mb-4">
+  <div class="dashboard-hero-content">
+    <div class="dashboard-hero-title">
+      <span>Arena Match</span>
+    </div>
+    <p class="dashboard-hero-sub">Sistema de Gestión de Torneos · ITIZ-2201 Base de Datos II</p>
+  </div>
 </div>
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <span class="stat-icon">👤</span>
-        <div class="stat-info">
-            <span class="stat-number">{{ stats.jugadores }}</span>
-            <span class="stat-label">Jugadores</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <span class="stat-icon">🛡</span>
-        <div class="stat-info">
-            <span class="stat-number">{{ stats.equipos }}</span>
-            <span class="stat-label">Equipos</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <span class="stat-icon">🏆</span>
-        <div class="stat-info">
-            <span class="stat-number">{{ stats.torneos }}</span>
-            <span class="stat-label">Torneos</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <span class="stat-icon">🎮</span>
-        <div class="stat-info">
-            <span class="stat-number">{{ stats.partidas }}</span>
-            <span class="stat-label">Partidas</span>
-        </div>
-    </div>
+<!-- ESTADÍSTICAS -->
+<div class="stat-grid">
+  <div class="stat-card pulse">
+    <span class="stat-icon">👤</span>
+    <div class="stat-value">{{ stats.jugadores }}</div>
+    <div class="stat-label">Jugadores</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">🛡</span>
+    <div class="stat-value">{{ stats.equipos }}</div>
+    <div class="stat-label">Equipos</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">🏆</span>
+    <div class="stat-value">{{ stats.torneos }}</div>
+    <div class="stat-label">Torneos</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">⚔</span>
+    <div class="stat-value">{{ stats.partidas }}</div>
+    <div class="stat-label">Partidas</div>
+  </div>
 </div>
 
-<div class="section-card">
-    <h2>Últimos Torneos</h2>
-    {% if torneos %}
-    <table class="data-table">
-        <thead>
-            <tr><th>Torneo</th><th>Videojuego</th><th>Estado</th><th>Acciones</th></tr>
-        </thead>
-        <tbody>
-        {% for t in torneos %}
-            <tr>
-                <td>{{ t.NombreTorneo }}</td>
-                <td>{{ t.NombreJuego }}</td>
-                <td><span class="badge badge-{{ t.Estado | lower | replace(' ', '-') }}">{{ t.Estado }}</span></td>
-                <td><a href="{{ url_for('torneos') }}" class="btn btn-sm">Ver todos</a></td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p class="empty">No hay torneos registrados aún.</p>
-    {% endif %}
-</div>
+<!-- TORNEOS RECIENTES -->
+<div class="section-title">Torneos Recientes</div>
 
-<div class="quick-actions">
-    <h2>Acciones Rápidas</h2>
-    <div class="actions-grid">
-        <a href="{{ url_for('jugador_nuevo') }}" class="action-btn">
-            <span>👤</span> Registrar Jugador
-        </a>
-        <a href="{{ url_for('equipo_nuevo') }}" class="action-btn">
-            <span>🛡</span> Crear Equipo
-        </a>
-        <a href="{{ url_for('torneo_nuevo') }}" class="action-btn">
-            <span>🏆</span> Crear Torneo
-        </a>
-        <a href="{{ url_for('reportes') }}" class="action-btn">
-            <span>📊</span> Ver Reportes
-        </a>
-    </div>
+{% if torneos %}
+<div class="table-wrapper mb-4">
+  <table>
+    <thead>
+      <tr>
+        <th>Torneo</th>
+        <th>Juego</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in torneos %}
+      <tr>
+        <td><strong>{{ t['NombreTorneo'] }}</strong></td>
+        <td><span class="text-muted">{{ t['NombreJuego'] }}</span></td>
+        <td>
+          {% set estado = t['Estado'] %}
+          {% if estado == 'Finalizado' %}
+            <span class="badge badge-secondary">{{ estado }}</span>
+          {% elif estado == 'En Curso' %}
+            <span class="badge badge-success">{{ estado }}</span>
+          {% elif estado == 'Inscripciones Abiertas' %}
+            <span class="badge badge-info">{{ estado }}</span>
+          {% else %}
+            <span class="badge badge-warning">{{ estado }}</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('torneo_detalle', id=t['ID_Torneo']) }}" class="btn btn-secondary btn-sm">Ver →</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-state-icon">🏆</div>
+  <p>No hay torneos registrados aún.</p>
+</div>
+{% endif %}
+
+<!-- ACCESOS RÁPIDOS -->
+<div class="section-title">Accesos Rápidos</div>
+<div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+  <a href="{{ url_for('jugador_nuevo') }}" class="btn btn-primary">+ Nuevo Jugador</a>
+  <a href="{{ url_for('equipo_nuevo') }}"  class="btn btn-success">+ Nuevo Equipo</a>
+  <a href="{{ url_for('torneo_nuevo') }}"  class="btn btn-warning">+ Nuevo Torneo</a>
+  <a href="{{ url_for('partida_nueva') }}" class="btn btn-secondary">+ Nueva Partida</a>
 </div>
 
 {% endblock %}
