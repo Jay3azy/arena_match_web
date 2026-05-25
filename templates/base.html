@@ -1,43 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Arena-Match{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Arena Match{% endblock %}</title>
+
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="nav-brand">
-        <span class="logo">⚔</span> Arena-Match
-    </div>
-    <ul class="nav-links">
-        <li><a href="{{ url_for('index') }}" {% if request.endpoint=='index' %}class="active"{% endif %}>Dashboard</a></li>
-        <li><a href="{{ url_for('jugadores') }}" {% if 'jugador' in request.endpoint %}class="active"{% endif %}>Jugadores</a></li>
-        <li><a href="{{ url_for('equipos') }}" {% if 'equipo' in request.endpoint %}class="active"{% endif %}>Equipos</a></li>
-        <li><a href="{{ url_for('torneos') }}" {% if 'torneo' in request.endpoint %}class="active"{% endif %}>Torneos</a></li>
-        <li><a href="{{ url_for('partidas') }}" {% if 'partida' in request.endpoint or 'resultado' in request.endpoint %}class="active"{% endif %}>Partidas</a></li>
-        <li><a href="{{ url_for('reportes') }}" {% if 'reporte' in request.endpoint %}class="active"{% endif %}>Reportes</a></li>
+  <!-- Fondo hero global (muy sutil) -->
+  <div class="hero-bg"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a class="navbar-brand" href="{{ url_for('index') }}">Arena Match</a>
+
+    <ul class="navbar-nav">
+      <li><a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}"
+             href="{{ url_for('index') }}">🏠 Dashboard</a></li>
+      <li><a class="nav-link {% if 'jugador' in (request.endpoint or '') %}active{% endif %}"
+             href="{{ url_for('jugadores') }}">👤 Jugadores</a></li>
+      <li><a class="nav-link {% if 'equipo' in (request.endpoint or '') %}active{% endif %}"
+             href="{{ url_for('equipos') }}">🛡 Equipos</a></li>
+      <li><a class="nav-link {% if 'torneo' in (request.endpoint or '') %}active{% endif %}"
+             href="{{ url_for('torneos') }}">🏆 Torneos</a></li>
+      <li><a class="nav-link {% if 'partida' in (request.endpoint or '') %}active{% endif %}"
+             href="{{ url_for('partidas') }}">⚔ Partidas</a></li>
+      <li><a class="nav-link {% if 'reporte' in (request.endpoint or '') %}active{% endif %}"
+             href="{{ url_for('reportes') }}">📊 Reportes</a></li>
     </ul>
-</nav>
+  </nav>
 
-<main class="container">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+  <!-- CONTENIDO -->
+  <div class="page-wrapper">
+    <div class="container animate-in">
 
-    {% block content %}{% endblock %}
-</main>
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              {% if category == 'success' %}✅{% elif category == 'danger' %}❌{% else %}⚠{% endif %}
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
 
-<footer class="footer">
-    <p>Arena-Match &copy; 2026 — ITIZ-2201 Base de Datos II — Grupo 04</p>
-</footer>
+      {% block content %}{% endblock %}
+    </div>
+  </div>
 
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>
