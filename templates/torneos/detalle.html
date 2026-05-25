@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}{{ torneo.NombreTorneo }} — Arena-Match{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🏆 {{ torneo.NombreTorneo }}</h1>
+    <a href="{{ url_for('torneos') }}" class="btn">← Volver</a>
+</div>
+
+<div class="section-card">
+    <p><strong>Videojuego:</strong> {{ torneo.NombreJuego }}</p>
+    <p><strong>Fechas:</strong> {{ torneo.FechaInicio }} → {{ torneo.FechaFin }}</p>
+    <p><strong>Estado:</strong>
+        <span class="badge badge-{{ torneo.Estado | lower | replace(' ', '-') }}">{{ torneo.Estado }}</span>
+    </p>
+    {% if torneo.Estado != 'Finalizado' %}
+    <form method="POST" action="{{ url_for('torneo_cambiar_estado', id=torneo.ID_Torneo) }}" style="margin-top:10px">
+        <button type="submit" class="btn btn-primary">Avanzar Estado →</button>
+    </form>
+    {% endif %}
+</div>
+
+<div class="section-card">
+    <h2>Partidas del Torneo</h2>
+    {% if partidas %}
+    <table class="data-table">
+        <thead>
+            <tr><th>#</th><th>Fecha/Hora</th><th>Árbitro</th><th>Resultado</th></tr>
+        </thead>
+        <tbody>
+        {% for p in partidas %}
+        <tr>
+            <td>{{ p.ID_Partida }}</td>
+            <td>{{ p.FechaHora }}</td>
+            <td>{{ p.Arbitro }}</td>
+            <td>
+                {% if p.Resultado_Final %}
+                    {{ p.Resultado_Final }}
+                {% else %}
+                    <a href="{{ url_for('registrar_resultado', id=p.ID_Partida) }}" class="btn btn-sm btn-warning">Registrar</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No hay partidas registradas para este torneo.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Editar' if torneo else 'Nuevo' }} Torneo — Arena-Match{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🏆 {{ 'Editar' if torneo else 'Nuevo' }} Torneo</h1>
+    <a href="{{ url_for('torneos') }}" class="btn">← Volver</a>
+</div>
+
+<div class="section-card form-card">
+    <form method="POST">
+        <div class="form-group">
+            <label>Nombre del Torneo *</label>
+            <input type="text" name="nombre" required
+                   value="{{ torneo.NombreTorneo if torneo else '' }}"
+                   placeholder="Ej: Copa Valorant 2026">
+        </div>
+        <div class="form-group">
+            <label>Videojuego *</label>
+            <select name="videojuego_id" required>
+                <option value="">— Seleccionar —</option>
+                {% for v in videojuegos %}
+                <option value="{{ v.ID_Videojuego }}"
+                    {{ 'selected' if torneo and torneo.ID_Videojuego == v.ID_Videojuego else '' }}>
+                    {{ v.NombreJuego }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Fecha de Inicio *</label>
+                <input type="datetime-local" name="fecha_inicio" required
+                       value="{{ torneo.FechaInicio if torneo else '' }}">
+            </div>
+            <div class="form-group">
+                <label>Fecha de Fin *</label>
+                <input type="datetime-local" name="fecha_fin" required
+                       value="{{ torneo.FechaFin if torneo else '' }}">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {{ 'Guardar Cambios' if torneo else 'Crear Torneo' }}
+            </button>
+            <a href="{{ url_for('torneos') }}" class="btn">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

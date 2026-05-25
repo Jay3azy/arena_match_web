@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Reportes — Arena-Match{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>📊 Reportes</h1>
+</div>
+
+<div class="actions-grid">
+    <a href="{{ url_for('reporte_equipos_torneo') }}" class="action-btn">
+        <span>🛡</span>
+        <strong>Equipos por Torneo</strong>
+        <small>Inscripciones y jugadores por torneo</small>
+    </a>
+    <a href="{{ url_for('reporte_transacciones') }}" class="action-btn">
+        <span>💰</span>
+        <strong>Transacciones</strong>
+        <small>Pagos de inscripción y premios</small>
+    </a>
+    <a href="{{ url_for('reporte_resultados') }}" class="action-btn">
+        <span>🏅</span>
+        <strong>Resultados</strong>
+        <small>Resultados de todos los enfrentamientos</small>
+    </a>
+</div>
+{% endblock %}

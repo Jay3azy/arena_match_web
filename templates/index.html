@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — Arena-Match{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>⚔ Arena-Match Dashboard</h1>
+    <p class="subtitle">Sistema de Gestión de Torneos E-Sports</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-icon">👤</span>
+        <div class="stat-info">
+            <span class="stat-number">{{ stats.jugadores }}</span>
+            <span class="stat-label">Jugadores</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon">🛡</span>
+        <div class="stat-info">
+            <span class="stat-number">{{ stats.equipos }}</span>
+            <span class="stat-label">Equipos</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon">🏆</span>
+        <div class="stat-info">
+            <span class="stat-number">{{ stats.torneos }}</span>
+            <span class="stat-label">Torneos</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon">🎮</span>
+        <div class="stat-info">
+            <span class="stat-number">{{ stats.partidas }}</span>
+            <span class="stat-label">Partidas</span>
+        </div>
+    </div>
+</div>
+
+<div class="section-card">
+    <h2>Últimos Torneos</h2>
+    {% if torneos %}
+    <table class="data-table">
+        <thead>
+            <tr><th>Torneo</th><th>Videojuego</th><th>Estado</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+        {% for t in torneos %}
+            <tr>
+                <td>{{ t.NombreTorneo }}</td>
+                <td>{{ t.NombreJuego }}</td>
+                <td><span class="badge badge-{{ t.Estado | lower | replace(' ', '-') }}">{{ t.Estado }}</span></td>
+                <td><a href="{{ url_for('torneos') }}" class="btn btn-sm">Ver todos</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No hay torneos registrados aún.</p>
+    {% endif %}
+</div>
+
+<div class="quick-actions">
+    <h2>Acciones Rápidas</h2>
+    <div class="actions-grid">
+        <a href="{{ url_for('jugador_nuevo') }}" class="action-btn">
+            <span>👤</span> Registrar Jugador
+        </a>
+        <a href="{{ url_for('equipo_nuevo') }}" class="action-btn">
+            <span>🛡</span> Crear Equipo
+        </a>
+        <a href="{{ url_for('torneo_nuevo') }}" class="action-btn">
+            <span>🏆</span> Crear Torneo
+        </a>
+        <a href="{{ url_for('reportes') }}" class="action-btn">
+            <span>📊</span> Ver Reportes
+        </a>
+    </div>
+</div>
+
+{% endblock %}

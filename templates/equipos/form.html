@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Editar' if equipo else 'Nuevo' }} Equipo — Arena-Match{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🛡 {{ 'Editar' if equipo else 'Nuevo' }} Equipo</h1>
+    <a href="{{ url_for('equipos') }}" class="btn">← Volver</a>
+</div>
+
+<div class="section-card form-card">
+    <form method="POST">
+        <div class="form-group">
+            <label>Nombre del Equipo *</label>
+            <input type="text" name="nombre" required
+                   value="{{ equipo.NombreEquipo if equipo else '' }}" placeholder="Ej: Team Alpha">
+        </div>
+        <div class="form-group">
+            <label>Videojuego *</label>
+            <select name="videojuego_id" required>
+                <option value="">— Seleccionar —</option>
+                {% for v in videojuegos %}
+                <option value="{{ v.ID_Videojuego }}"
+                    {{ 'selected' if equipo and equipo.ID_Videojuego == v.ID_Videojuego else '' }}>
+                    {{ v.NombreJuego }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Capitán *</label>
+            <select name="capitan_id" required>
+                <option value="">— Seleccionar —</option>
+                {% for c in capitanes %}
+                <option value="{{ c.ID_Jugador }}"
+                    {{ 'selected' if equipo and equipo.ID_Capitan == c.ID_Jugador else '' }}>
+                    {{ c.NombreCompleto }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {{ 'Guardar Cambios' if equipo else 'Crear Equipo' }}
+            </button>
+            <a href="{{ url_for('equipos') }}" class="btn">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

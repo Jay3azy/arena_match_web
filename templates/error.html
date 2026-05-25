@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Error — Arena-Match{% endblock %}
+{% block content %}
+<div class="section-card" style="text-align:center;padding:3rem">
+    <h1 style="font-size:4rem">⚠</h1>
+    <h2>Error de Conexión</h2>
+    <p>No se pudo conectar con la base de datos SQL Server.</p>
+    <code style="display:block;background:#1a1a2e;padding:1rem;border-radius:8px;margin:1rem 0;text-align:left">{{ error }}</code>
+    <p>Verifica la configuración en <strong>app.py</strong> → <code>DB_CONFIG</code></p>
+    <a href="/" class="btn btn-primary">Reintentar</a>
+</div>
+{% endblock %}

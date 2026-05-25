@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}{{ equipo.NombreEquipo }} — Arena-Match{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>🛡 {{ equipo.NombreEquipo }}</h1>
+    <a href="{{ url_for('equipos') }}" class="btn">← Volver</a>
+</div>
+
+<div class="section-card">
+    <p><strong>Videojuego:</strong> {{ equipo.NombreJuego }}</p>
+    <p><strong>Capitán:</strong> {{ equipo.NombreCapitan }}</p>
+    <p><strong>Fecha de Creación:</strong> {{ equipo.FechaCreacion }}</p>
+</div>
+
+<div class="section-card">
+    <h2>Miembros del Equipo</h2>
+    {% if jugadores %}
+    <table class="data-table">
+        <thead>
+            <tr><th>#</th><th>Nickname</th><th>Nombre</th><th>Apellido</th><th>Rol</th><th>Ingreso</th><th>Activo</th></tr>
+        </thead>
+        <tbody>
+        {% for j in jugadores %}
+        <tr>
+            <td>{{ j.ID_Jugador }}</td>
+            <td><strong>{{ j.Nickname }}</strong></td>
+            <td>{{ j.Nombre }}</td>
+            <td>{{ j.Apellido }}</td>
+            <td>{{ j.RolPlataforma }}</td>
+            <td>{{ j.FechaIngreso }}</td>
+            <td>{{ '✅' if j.Activo else '❌' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">Este equipo no tiene miembros registrados en Miembros_Equipo.</p>
+    {% endif %}
+</div>
+{% endblock %}
