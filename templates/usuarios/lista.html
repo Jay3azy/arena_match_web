@@ -19,7 +19,6 @@
         <tbody>
         {% for u in jugadores %}
         <tr>
-<<<<<<< HEAD
             <td>{{ u.ID_Jugador }}</td>
             <td>{{ u.Nombre }}</td>
             <td>{{ u.Apellido }}</td>
@@ -33,21 +32,6 @@
                     <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
                 </form>
             </td>
-=======
-            <td>{{ u.id_jugador }}</td>
-<td>{{ u.nombre }}</td>
-<td>{{ u.apellido }}</td>
-<td><strong>{{ u.nickname }}</strong></td>
-<td>{{ u.correo }}</td>
-<td><span class="badge badge-rol">{{ u.rolplataforma }}</span></td>
-<td class="actions">
-    <a href="{{ url_for('jugador_editar', id=u.id_jugador) }}" class="btn btn-sm btn-warning">Editar</a>
-    <form method="POST" action="{{ url_for('jugador_eliminar', id=u.id_jugador) }}" style="display:inline"
-          onsubmit="return confirm('¿Eliminar jugador?')">
-        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-    </form>
-</td>
->>>>>>> 1a7b5790201de0e2eec3f73eca17ca4f90d98727
         </tr>
         {% endfor %}
         </tbody>
@@ -56,4 +40,4 @@
     <p class="empty">No hay jugadores registrados.</p>
     {% endif %}
 </div>
-{% endblock %}
+{% endblock %}S
