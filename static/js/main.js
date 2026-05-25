@@ -1,22 +1,31 @@
-/* Arena-Match — JavaScript principal */
+/* Arena Match — main.js */
 
-// Auto-ocultar alertas después de 4 segundos
-document.addEventListener('DOMContentLoaded', function () {
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(function (alert) {
-        setTimeout(function () {
-            alert.style.transition = 'opacity 0.5s';
-            alert.style.opacity = '0';
-            setTimeout(() => alert.remove(), 500);
-        }, 4000);
+// Auto-dismiss flash messages after 4s
+document.addEventListener('DOMContentLoaded', () => {
+  const alerts = document.querySelectorAll('.alert');
+  alerts.forEach(el => {
+    setTimeout(() => {
+      el.style.transition = 'opacity 0.5s ease';
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 500);
+    }, 4000);
+  });
+
+  // Confirm on delete buttons
+  document.querySelectorAll('form[data-confirm]').forEach(form => {
+    form.addEventListener('submit', e => {
+      if (!confirm(form.dataset.confirm || '¿Estás seguro?')) {
+        e.preventDefault();
+      }
     });
+  });
 
-    // Marcar fecha mínima en inputs de fecha (fecha_fin >= fecha_inicio)
-    const fechaInicio = document.querySelector('input[name="fecha_inicio"]');
-    const fechaFin    = document.querySelector('input[name="fecha_fin"]');
-    if (fechaInicio && fechaFin) {
-        fechaInicio.addEventListener('change', function () {
-            fechaFin.min = this.value;
-        });
+  // Highlight active nav link based on URL path
+  const path = window.location.pathname.split('/')[1];
+  document.querySelectorAll('.nav-link').forEach(link => {
+    const href = link.getAttribute('href') || '';
+    if (path && href.includes(path)) {
+      link.classList.add('active');
     }
+  });
 });
